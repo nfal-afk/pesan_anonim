@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌 Kirim Pesan Anonim ke Naufal</title>
+
+<!-- Open Graph -->
+<meta property="og:title" content="💌 Ada yang mau bilang sesuatu ke Naufal?" />
+<meta property="og:description" content="Kirim pesan anonim ke Naufal — dia gak bakal tau siapa kamu 👀 Berani coba?" />
+<meta property="og:image" content="https://gt.tc/ft.jpg" />
+<meta property="og:url" content="https://gt.tc" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Pesan Anonim" />
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+:root{--bg:linear-gradient(135deg,#f5f5f5,#eaeaea);}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+body{margin:0;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;font-family:Poppins,sans-serif;background:var(--bg);padding:20px 0 40px;}
+
+.container{width:90%;max-width:420px;padding:20px;border-radius:22px;background:#fff;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.08);margin:auto;}
+
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.clock{font-size:14px;color:#555;}
+.top-btn{font-size:12px;padding:6px 10px;border:none;border-radius:10px;cursor:pointer;background:#eee;transition:.15s;}
+.top-btn:hover{background:#ddd;}
+
+.title{font-family:Silkscreen;color:#000;margin:8px 0 4px;}
+.subtitle{color:#666;margin-bottom:16px;font-size:14px;}
+
+/* ── VIBE DETECTOR ── */
+.vibe-bar{
+  display:flex;align-items:center;gap:8px;
+  background:#f8f8f8;border:1px solid #eee;border-radius:12px;
+  padding:8px 12px;margin-bottom:14px;font-size:13px;color:#888;
+  min-height:38px;transition:all .3s;
+}
+.vibe-dot{width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background .3s;}
+.vibe-positive .vibe-dot{background:#4ade80;}
+.vibe-toxic    .vibe-dot{background:#f87171;}
+.vibe-flirty   .vibe-dot{background:#f9a8d4;}
+.vibe-funny    .vibe-dot{background:#fbbf24;}
+.vibe-positive{color:#166534;}
+.vibe-toxic   {color:#991b1b;}
+.vibe-flirty  {color:#9d174d;}
+.vibe-funny   {color:#92400e;}
+
+/* ── FORM ── */
+.form-group{position:relative;margin-bottom:16px;}
+.form_input{width:100%;padding:18px 14px 10px;border-radius:14px;border:1px solid #ddd;font-family:Poppins,sans-serif;font-size:14px;outline:none;transition:border .2s;}
+.form_input:focus{border-color:#aaa;}
+.form_label{position:absolute;left:14px;top:16px;font-size:14px;color:#888;transition:.2s;pointer-events:none;background:#fff;}
+.form_input:focus~.form_label,
+.form_input:not(:placeholder-shown)~.form_label{top:-8px;font-size:11px;padding:0 4px;}
+textarea{min-height:120px;resize:none;}
+
+.preview{margin:10px 0;}
+.preview img{max-width:120px;border-radius:10px;display:block;margin:auto;}
+.preview small{display:block;margin-top:5px;color:#777;font-size:12px;}
+.preview button{margin-top:6px;font-size:12px;padding:4px 10px;border:none;background:#eee;border-radius:8px;cursor:pointer;}
+
+select{width:100%;padding:14px;border-radius:12px;border:1px solid #ddd;font-family:Poppins,sans-serif;font-size:14px;background:#fff;outline:none;}
+
+/* ── CHAR COUNT ── */
+.char-row{display:flex;justify-content:flex-end;margin-top:-10px;margin-bottom:10px;}
+.char-count{font-size:11px;color:#bbb;}
+.char-count.warn{color:#f87171;}
+
+/* ── BLOCKED WARNING ── */
+.blocked-warn{
+  display:none;background:#fff0f0;border:1px solid #fca5a5;
+  border-radius:10px;padding:8px 12px;font-size:12px;color:#991b1b;
+  margin-bottom:12px;text-align:left;
+}
+.blocked-warn.show{display:block;}
+
+/* ── HINT BOX ── */
+.hint-box{
+  background:#fffbeb;border:1px solid #fde68a;border-radius:12px;
+  padding:9px 13px;font-size:12px;color:#92400e;margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;
+}
+
+/* ── REACTION POLL ── */
+.poll-label{font-size:12px;color:#888;margin-bottom:8px;}
+.reactions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.react-btn{
+  padding:6px 14px;border:1px solid #eee;border-radius:99px;
+  background:#f8f8f8;cursor:pointer;font-size:13px;transition:all .15s;
+  display:flex;align-items:center;gap:4px;
+}
+.react-btn:hover{transform:scale(1.07);}
+.react-btn.active{background:#000;color:#fff;border-color:#000;}
+
+/* ── SPAM LIMIT ── */
+.spam-warn{
+  display:none;background:#fff0f0;border:1px solid #fca5a5;
+  border-radius:10px;padding:8px 12px;font-size:12px;color:#991b1b;
+  margin-bottom:12px;text-align:center;
+}
+.spam-warn.show{display:block;}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:10px;margin-top:10px;}
+.btn{flex:1;padding:10px;border-radius:12px;border:1px solid #eee;cursor:pointer;background:#f8f8f8;font-family:Poppins,sans-serif;font-size:13px;transition:.15s;}
+.btn:hover{background:#eee;}
+
+.kirim{
+  width:100%;margin-top:15px;padding:12px;border:none;border-radius:14px;
+  background:#222;color:#fff;font-family:Poppins,sans-serif;font-size:14px;
+  font-weight:600;cursor:pointer;transition:.15s;
+}
+.kirim:hover{background:#000;}
+.kirim:disabled{background:#ccc;cursor:not-allowed;}
+
+/* ── POPUP ── */
+.popup{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;justify-content:center;align-items:center;z-index:99;}
+.popup-box{background:#fff;padding:24px 28px;border-radius:18px;text-align:center;animation:fade .3s ease;max-width:320px;width:90%;}
+@keyframes fade{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.popup h3{margin:0 0 8px;font-family:Silkscreen;}
+.popup p{margin:0 0 16px;color:#666;font-size:14px;}
+.popup small{display:block;font-size:12px;color:#aaa;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:#222;color:#fff;border-radius:12px;padding:10px 18px;
+  font-size:13px;opacity:0;transition:all .3s;pointer-events:none;
+  white-space:nowrap;z-index:100;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── CAPTCHA ── */
+.captcha-box{
+  background:#f8f8f8;border:1px solid #eee;border-radius:12px;
+  padding:12px;margin-bottom:14px;
+}
+.captcha-box p{font-size:13px;color:#555;margin:0 0 8px;}
+.captcha-q{font-size:18px;font-weight:600;letter-spacing:3px;font-family:Silkscreen;margin-bottom:8px;}
+.captcha-input{width:80px;padding:8px;border:1px solid #ddd;border-radius:8px;text-align:center;font-size:16px;font-family:Poppins,sans-serif;outline:none;}
+.captcha-err{color:#f87171;font-size:12px;margin-top:4px;display:none;}
+.captcha-err.show{display:block;}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="clock" id="clock"></div>
+    <div style="display:flex;gap:6px;">
+      <button class="top-btn" onclick="copyLink()">salin link</button>
+      <button class="top-btn" onclick="shareWA()">kirim ke wa</button>
+    </div>
+  </div>
+
+  <h1 class="title">💌 pesan anonim</h1>
+  <p class="subtitle">kirim pesan untuk <strong>naufal</strong></p>
+
+  <!-- FAKE HINT -->
+  <div class="hint-box">
+    👀 <span id="hint-text">pengirim mungkin dari sekolah yang sama denganmu</span>
+  </div>
+
+  <!-- REACTION POLL -->
+  <p class="poll-label">perasaan lo ke dia sekarang?</p>
+  <div class="reactions" id="reactions">
+    <button class="react-btn" onclick="pilihReaksi(this,'❤️ sayang')">❤️</button>
+    <button class="react-btn" onclick="pilihReaksi(this,'🔥 respect')">🔥</button>
+    <button class="react-btn" onclick="pilihReaksi(this,'😂 lucu')">😂</button>
+    <button class="react-btn" onclick="pilihReaksi(this,'😐 biasa aja')">😐</button>
+    <button class="react-btn" onclick="pilihReaksi(this,'😠 sebel')">😠</button>
+  </div>
+
+  <!-- SPAM WARNING -->
+  <div class="spam-warn" id="spam-warn">⏳ lo udah kirim barusan, tunggu bentar dulu ya!</div>
+
+  <!-- FORM -->
+  <form id="anonForm" enctype="multipart/form-data">
+
+    <!-- IDENTITAS -->
+    <div class="form-group">
+      <select id="identitas" name="identitas" required onchange="cekCustom()">
+        <option value="">-- pilih identitas --</option>
+        <option value="teman">🤝 teman</option>
+        <option value="pengagum">😏 orang yang mengagumi mu</option>
+        <option value="misterius">🕵️ seseorang misterius</option>
+        <option value="musuh">😈 musuh</option>
+        <option value="random">🤔 orang random</option>
+        <option value="custom">✍️ isi nama sendiri</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="customBox" style="display:none;">
+      <input name="nama_custom" placeholder=" " class="form_input">
+      <label class="form_label">isi nama bebas</label>
+    </div>
+
+    <!-- PESAN -->
+    <div class="form-group">
+      <textarea name="pesan" id="pesanTA" placeholder=" " required class="form_input" oninput="onPesan()"></textarea>
+      <label class="form_label">pesan</label>
+    </div>
+    <div class="char-row"><span class="char-count" id="char-count">0/280</span></div>
+
+    <!-- BLOCKED WARNING -->
+    <div class="blocked-warn" id="blocked-warn">🚫 pesan mengandung kata yang tidak diperbolehkan</div>
+
+    <!-- VIBE DETECTOR -->
+    <div class="vibe-bar" id="vibe-bar">
+      <span class="vibe-dot"></span>
+      <span id="vibe-text">vibe pesan: ketik dulu...</span>
+    </div>
+
+    <!-- CAPTCHA -->
+    <div class="captcha-box">
+      <p>buktiin kamu bukan robot 🤖</p>
+      <div class="captcha-q" id="captcha-q"></div>
+      <input type="number" class="captcha-input" id="captcha-ans" placeholder="?" oninput="cekCaptcha()">
+      <div class="captcha-err" id="captcha-err">jawaban salah!</div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview" id="preview"></div>
+
+    <!-- FOTO -->
+    <div class="btn-row">
+      <input type="file" accept="image/*" capture="environment" id="camera" hidden>
+      <button type="button" class="btn" onclick="openCamera()">📷 kamera</button>
+      <input type="file" name="foto" accept="image/*" id="file" hidden>
+      <button type="button" class="btn" onclick="openFile()">🖼 file</button>
+    </div>
+
+    <button type="submit" class="kirim" id="kirimBtn">kirim 🚀</button>
+
+  </form>
+</div>
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-box">
+    <h3>✅ terkirim!</h3>
+    <p id="popup-vibe">pesan lo udah sampai 😏</p>
+    <small id="popup-reaction"></small>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────
+const MAX_CHAR = 280;
+const SPAM_COOLDOWN = 30000; // 30 detik
+const BLOCKED_WORDS = ['anjing','bangsat','babi','kontol','memek','fuck','shit','bastard','goblok','tolol'];
+const FAKE_HINTS = [
+  'pengirim mungkin dari sekolah yang sama denganmu 🏫',
+  'pengirim kayaknya lebih tua dari lo 🧓',
+  'pengirim mungkin temen deket yang lo tau 👀',
+  'pengirim suka nonton yang sama kayak lo 🎬',
+  'pengirim mungkin dari kotamu 📍',
+  'pengirim udah kenal lo lama tapi jarang ngobrol 🤫',
+];
+const VIBE_RULES = [
+  {words:['sayang','suka','cinta','keren','bagus','baik','salut','kece','mantap','hebat','top','amazing','nice','sweet','bangga'], vibe:'positive', label:'😄 positif banget!'},
+  {words:['nyebelin','jelek','benci','jahat','annoying','stupid','ugly','lebay','norak','gak suka'], vibe:'toxic', label:'😈 agak toxic nih'},
+  {words:['cantik','ganteng','cute','imut','crush','gebetan','cakep','charming'], vibe:'flirty', label:'💕 ada yang flirty~'},
+  {words:['haha','wkwk','lol','ngakak','lucu','hehe','xd','funny'], vibe:'funny', label:'😂 lucu!'},
+];
+
+// ─── STATE ────────────────────────────────────────────────
+let selectedReaksi = '';
+let lastSentTime = 0;
+let captchaAnswer = 0;
+let captchaOk = false;
+let vibeTimeout = null;
+
+// ─── CAPTCHA ──────────────────────────────────────────────
+function buatCaptcha() {
+  const a = Math.floor(Math.random()*9)+1;
+  const b = Math.floor(Math.random()*9)+1;
+  captchaAnswer = a + b;
+  captchaOk = false;
+  document.getElementById('captcha-q').textContent = `${a} + ${b} = ?`;
+  document.getElementById('captcha-ans').value = '';
+  document.getElementById('captcha-err').classList.remove('show');
+}
+
+function cekCaptcha() {
+  const val = parseInt(document.getElementById('captcha-ans').value);
+  captchaOk = val === captchaAnswer;
+  document.getElementById('captcha-err').classList.toggle('show', !captchaOk && document.getElementById('captcha-ans').value !== '');
+}
+
+// ─── HINT ─────────────────────────────────────────────────
+function acakHint() {
+  const h = FAKE_HINTS[Math.floor(Math.random()*FAKE_HINTS.length)];
+  document.getElementById('hint-text').textContent = h;
+}
+
+// ─── VIBE ─────────────────────────────────────────────────
+function detectVibe(text) {
+  const lower = text.toLowerCase();
+  for (const r of VIBE_RULES) {
+    if (r.words.some(w => lower.includes(w))) return r;
+  }
+  return {vibe:'neutral', label:'💭 netral aja'};
+}
+
+function onPesan() {
+  const ta = document.getElementById('pesanTA');
+  const text = ta.value;
+
+  // char count
+  const cc = document.getElementById('char-count');
+  cc.textContent = `${text.length}/${MAX_CHAR}`;
+  cc.classList.toggle('warn', text.length > MAX_CHAR*0.85);
+  if (text.length > MAX_CHAR) ta.value = text.slice(0, MAX_CHAR);
+
+  // blocked
+  const hasBlocked = BLOCKED_WORDS.some(w => text.toLowerCase().includes(w));
+  document.getElementById('blocked-warn').classList.toggle('show', hasBlocked);
+
+  // vibe (debounce 500ms)
+  const bar = document.getElementById('vibe-bar');
+  const vibeText = document.getElementById('vibe-text');
+  bar.className = 'vibe-bar';
+  vibeText.textContent = 'vibe pesan: ...';
+  clearTimeout(vibeTimeout);
+
+  if (!text) { vibeText.textContent = 'vibe pesan: ketik dulu...'; return; }
+
+  vibeTimeout = setTimeout(() => {
+    const result = detectVibe(text);
+    bar.className = `vibe-bar ${result.vibe}`;
+    vibeText.textContent = `vibe pesan: ${result.label}`;
+  }, 500);
+}
+
+// ─── REACTION ─────────────────────────────────────────────
+function pilihReaksi(btn, label) {
+  selectedReaksi = label;
+  document.querySelectorAll('.react-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  acakHint();
+}
+
+// ─── IDENTITAS ────────────────────────────────────────────
+function cekCustom() {
+  const val = document.getElementById('identitas').value;
+  document.getElementById('customBox').style.display = val === 'custom' ? 'block' : 'none';
+}
+
+// ─── FOTO ─────────────────────────────────────────────────
+const fileInput   = document.getElementById('file');
+const cameraInput = document.getElementById('camera');
+const preview     = document.getElementById('preview');
+
+function openFile()  { fileInput.click(); }
+function openCamera(){ cameraInput.click(); }
+
+fileInput.onchange   = handleImage;
+cameraInput.onchange = handleImage;
+
+function handleImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    preview.innerHTML = `
+      <img src="${ev.target.result}">
+      <small>preview foto (anonim 👀)</small>
+      <button type="button" onclick="hapus()">hapus</button>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function hapus() {
+  preview.innerHTML = '';
+  fileInput.value = '';
+  cameraInput.value = '';
+}
+
+// ─── SUBMIT ───────────────────────────────────────────────
+const form = document.getElementById('anonForm');
+const popup = document.getElementById('popup');
+
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  // spam check
+  const now = Date.now();
+  if (now - lastSentTime < SPAM_COOLDOWN) {
+    document.getElementById('spam-warn').classList.add('show');
+    setTimeout(() => document.getElementById('spam-warn').classList.remove('show'), 3000);
+    return;
+  }
+
+  // blocked check
+  const pesan = document.getElementById('pesanTA').value;
+  if (BLOCKED_WORDS.some(w => pesan.toLowerCase().includes(w))) {
+    showToast('🚫 hapus kata terlarang dulu ya');
+    return;
+  }
+
+  // captcha check
+  if (!captchaOk) {
+    showToast('🤖 jawab captcha dulu yang bener');
+    document.getElementById('captcha-err').classList.add('show');
+    return;
+  }
+
+  if (!form.checkValidity()) return;
+
+  // build formdata
+  const formData = new FormData(form);
+  if (cameraInput.files[0]) formData.set('foto', cameraInput.files[0]);
+  if (formData.get('identitas') === 'custom')
+    formData.set('identitas', formData.get('nama_custom') || 'misterius');
+  if (selectedReaksi) formData.set('reaksi', selectedReaksi);
+
+  // --- kirim ke server ---
+  try {
+    const res  = await fetch('kirim.php', {method:'POST', body:formData});
+    const text = await res.text();
+    if (text.trim() !== 'ok') { alert('server error: ' + text); return; }
+  } catch(err) {
+    // mode demo (tanpa server) — tetap lanjut
+  }
+
+  // sukses
+  lastSentTime = now;
+  const vibe = detectVibe(pesan);
+
+  document.getElementById('popup-vibe').textContent =
+    `pesan terkirim! vibe: ${vibe.label}`;
+  document.getElementById('popup-reaction').textContent =
+    selectedReaksi ? `reaksi lo: ${selectedReaksi}` : '';
+
+  popup.style.display = 'flex';
+  buatCaptcha();
+  form.reset();
+  hapus();
+  document.querySelectorAll('.react-btn').forEach(b => b.classList.remove('active'));
+  selectedReaksi = '';
+  document.getElementById('vibe-bar').className = 'vibe-bar';
+  document.getElementById('vibe-text').textContent = 'vibe pesan: ketik dulu...';
+  document.getElementById('char-count').textContent = `0/${MAX_CHAR}`;
+  document.getElementById('blocked-warn').classList.remove('show');
+  acakHint();
+
+  setTimeout(() => { popup.style.display = 'none'; }, 2200);
+});
+
+// ─── SHARE ────────────────────────────────────────────────
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href)
+    .then(() => showToast('🔗 link disalin!'))
+    .catch(() => showToast(window.location.href));
+}
+
+function shareWA() {
+  const text = encodeURIComponent('kirim pesan anonim ke gue 😏👉 ' + window.location.href);
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
+// ─── TOAST ────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ─── CLOCK ────────────────────────────────────────────────
+function updateClock() {
+  document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ─── INIT ─────────────────────────────────────────────────
+buatCaptcha();
+acakHint();
+</script>
+</body>
+</html>
